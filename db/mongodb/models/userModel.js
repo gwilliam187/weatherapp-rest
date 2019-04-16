@@ -8,7 +8,7 @@ const citySchema = new mongoose.Schema({
         type: String
     },
     isPublic: {
-        type: boolean
+        type: Boolean
     }
 })
 

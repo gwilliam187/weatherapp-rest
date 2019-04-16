@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { User } from '../mongodb/models/userModel';
+import { User } from '../db/mongodb/models/userModel';
 
 const router = express.Router();
 
