@@ -76,12 +76,16 @@ router.route('/userCities/:userId/:cityId')
 	
 	// Edits a specified city for a specified user
 	.put((req, res) => {
-		User.update(
+		User.updateOne(
 			{ 
 				'_id': req.params.userId, 
 				'cities._id': req.params.cityId
 			},
-			{ $set: { 'cities.$.cityName': req.body.cityName }},
+			{ $set: 
+				{ 
+					'cities.$.cityName': req.body.cityName 
+				}
+			},
 			(err, city) => {
 				if(err) 
 					res.send(err);
