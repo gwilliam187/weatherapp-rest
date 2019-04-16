@@ -9,14 +9,17 @@ router.route('/users')
 	// Gets all users
 	.get((req, res) => {
 		User.find((err, users) => {
-			if(err) res.send(err);
-
-			res.json(users);
+			if(err) {
+				res.send(err);
+			} else {
+				res.json(users);
+			}
 		})
 	})
 
 	// Creates a user
 	.post((req, res) => {
+		console.log(req.body)
 		const _id = req.body._id
 		const data = new User({
 			_id : _id
@@ -90,15 +93,8 @@ router.route('/userCities/:userId/:cityId')
 		const cityName = req.body.cityName;
 
 		User.updateOne(
-			{ 
-				'_id': userId, 
-				'cities._id': cityId
-			},
-			{ $set: 
-				{ 
-					'cities.$.cityName': cityName 
-				}
-			},
+			{ '_id': userId, 'cities._id': cityId },
+			{ $set: { 'cities.$.cityName': cityName } },
 			(err, rawResponse) => {
 				if(err) {
 					res.send(err);
@@ -112,9 +108,19 @@ router.route('/userCities/:userId/:cityId')
 	})
 
 	.delete((req, res) => {
-		User.update(
+		User.updateOne(
 			{ _id: req.params.userId }, 
-			{ $pullAll: { _id: req.params.cityId } }
+			{ $pull: { 'cities': { '_id': req.params.cityId } } },
+			(err, rawResponse) => {
+				if(err) {
+					res.send(err);
+				} else {
+					res.json({
+						message: 'success',
+						data: rawResponse
+					});
+				}
+			}
 		)
 	});
 
