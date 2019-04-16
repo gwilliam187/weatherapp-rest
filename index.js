@@ -1,7 +1,7 @@
 import express from 'express';
 
 import restApiRouter from './routes/restApi'; 
-import mongo from './db/mongo';
+import mongo from './db/mongodb/mongo';
 
 const app = express();
 const port = 8088;
