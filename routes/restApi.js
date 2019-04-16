@@ -44,8 +44,11 @@ router.route('/users/:userId')
 	// Creates a city for a specified user
 	.post( async(req, res) => {
 		const _id = req.params.userId
-		//console.log(req.body.citiesJSON)
-		const city = JSON.parse(req.body.cityJSON); // API caller passes cities in form of JSON array
+		const city = {
+			_id : req.body._id,
+			cityName: req.body.cityName,
+			isPublic: req.body.isPublic
+		}
 		const user = await User.findById(_id)
 		console.log(user);
 		let userCities = user.cities;
@@ -80,8 +83,28 @@ router.route('/userCities/:userId/:cityId')
 	})
 
 	// Deletes a specified city from a specified user
-	.delete((req, res) => {
-
+	.delete(async(req, res) => {
+		const _id = req.params.userId
+		const cityArg = req.params.cityId
+		cityArg.replace('+', ' ')
+		const user = await User.findById(_id)
+		console.log(user)
+		let userCities = Array()
+		user.cities.forEach((existingCity)=>{
+			console.log(existingCity + " === "+ cityArg)
+			if 	(existingCity._id!== cityArg) {
+				userCities.push(existingCity)
+			}
+		})
+		//userCities.push(city)
+		User.updateMany({_id: _id}, {
+			$set : {
+				cities: userCities
+			}
+		}, (err)=>{
+			const msg = err ? {message: 'failed'} : {message: 'success'}
+			res.json(msg)
+		})
 	});
 
 export default router;
