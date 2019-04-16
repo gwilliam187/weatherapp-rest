@@ -5,6 +5,7 @@ const port = '27017';
 const user = 'commsult-admin';
 const pass = 'password';
 const auth_dbName = 'admin';
+const dbName = 'weatherapp';
 
 mongoose.connect(`mongodb://${ user }:${ pass }@${ uri }:${ port }/${ auth_dbName }`,
 		{ useNewUrlParser: true });
