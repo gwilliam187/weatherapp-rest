@@ -79,32 +79,33 @@ router.route('/userCities/:userId/:cityId')
 	
 	// Edits a specified city for a specified user
 	.put((req, res) => {
-
+		User.updateOne(
+			{ 
+				'_id': req.params.userId, 
+				'cities._id': req.params.cityId
+			},
+			{ $set: 
+				{ 
+					'cities.$.cityName': req.body.cityName 
+				}
+			},
+			(err, city) => {
+				if(err) 
+					res.send(err);
+				else {
+					res.json({
+						message: 'success',
+						data: city
+					});
+				}
+			});
 	})
 
-	// Deletes a specified city from a specified user
-	.delete(async(req, res) => {
-		const _id = req.params.userId
-		const cityArg = req.params.cityId
-		cityArg.replace('+', ' ')
-		const user = await User.findById(_id)
-		console.log(user)
-		let userCities = Array()
-		user.cities.forEach((existingCity)=>{
-			console.log(existingCity + " === "+ cityArg)
-			if 	(existingCity._id!== cityArg) {
-				userCities.push(existingCity)
-			}
-		})
-		//userCities.push(city)
-		User.updateMany({_id: _id}, {
-			$set : {
-				cities: userCities
-			}
-		}, (err)=>{
-			const msg = err ? {message: 'failed'} : {message: 'success'}
-			res.json(msg)
-		})
+	.delete((req, res) => {
+		User.update(
+			{ _id: req.params.userId }, 
+			{ $pullAll: { _id: req.params.cityId } }
+		)
 	});
 
 export default router;
