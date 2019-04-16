@@ -1,11 +1,11 @@
 import express from 'express';
 
-import apiRouter from './routes/api'; 
+import restApiRouter from './routes/restApi'; 
 
 const app = express();
 const port = 8088;
 
-app.use('/api', apiRouter);
+app.use('/api', restApiRouter);
 
 app.get('/', (req, res) => {
 	res.send('GET here');
