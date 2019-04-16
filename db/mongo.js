@@ -4,7 +4,7 @@ const uri = 'sgu.pdm-commsult.intranet';
 const port = '27017';
 const user = 'commsult-admin';
 const pass = 'password';
-const dbName = '';
+const dbName = 'weatherapp';
 
 mongoose.connect(`mongodb://${ user }:${ pass }@${ uri }:${ port }/${ dbName }`, 
 		{ useNewUrlParser: true });
