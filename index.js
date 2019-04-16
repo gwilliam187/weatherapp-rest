@@ -1,10 +1,15 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 
 import restApiRouter from './routes/restApi'; 
 import mongo from './db/mongodb/mongo';
 
 const app = express();
 const port = 8088;
+
+// bodyParser setup
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/api', restApiRouter);
 

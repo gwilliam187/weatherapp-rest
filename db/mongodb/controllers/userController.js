@@ -2,8 +2,10 @@ import { User } from './models/userModel.js';
 
 const controller;
 
-controller.view = (req, res) => {
-	
+controller.viewUserCities = (req, res) => {
+	User.get((err, users) {
+
+	})
 }
 
 export default controller;

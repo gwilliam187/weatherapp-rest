@@ -2,20 +2,37 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-	res.send('API GET here');
-});
+router.route('/users')
+	// Creates a user
+	.post((req, res) => {
 
-router.post('/', (req, res) => {
-	res.send('API POST here')
-});
+	})
+	
+	// Gets all users
+	.get((req, res) => {
 
-router.put('/', (req, res) => {
-	res.send('API PUT here')
-});
+	});
 
-router.delete('/', (req, res) => {
-	res.send('API DELETE here')
-});
+router.route('/users/:userId')
+	// Gets a user with specified ID
+	.get((req, res) => {
+
+	});
+
+// router.get('/', (req, res) => {
+// 	res.send('API GET here');
+// });
+
+// router.post('/', (req, res) => {
+// 	res.send('API POST here')
+// });
+
+// router.put('/', (req, res) => {
+// 	res.send('API PUT here')
+// });
+
+// router.delete('/', (req, res) => {
+// 	res.send('API DELETE here')
+// });
 
 export default router;
