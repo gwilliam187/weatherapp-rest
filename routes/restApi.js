@@ -23,6 +23,7 @@ router.route('/users')
 			Example req.body
 			{ _id: 'sandiaga_uno' }
 		*/
+		console.log('here')
 		const _id = req.body._id
 		const data = new User({
 			_id : _id
@@ -57,22 +58,34 @@ router.route('/users/:userId')
 		 */
 		const _id = req.params.userId
 		const city = {
-			_id : req.body._id,
+			id : req.body._id,
 			cityName: req.body.cityName,
 			isPublic: req.body.isPublic
 		}
-		const user = await User.findById(_id)
-		console.log(user);
-		let userCities = user.cities;
-		userCities.push(city)
-		User.update({_id: _id}, {
-			$set : {
-				cities: userCities
-			}
-		}, (err, response)=>{
-			const msg = err ? {message: 'failed'} : {message: 'success'}
-			res.json(msg)
-		})
+
+		User.updateOne(
+			{ _id: _id },
+			{ $addToSet: { cities: city } },
+			(err, rawResponse) => {
+				if(err) {
+					res.send(err);
+				} else {
+					res.json(rawResponse);
+				}
+			})
+
+		// const user = await User.findById(_id)
+		// // console.log(user);
+		// let userCities = user.cities;
+		// userCities.push(city)
+		// User.updateOne({_id: _id}, {
+		// 	$set : {
+		// 		cities: userCities
+		// 	}
+		// }, (err, response)=>{
+		// 	const msg = err ? {message: 'failed'} : {message: 'success'}
+		// 	res.json(msg)
+		// })
 	})
 
 	// Deletes a specified user
@@ -102,7 +115,7 @@ router.route('/userCities/:userId/:cityId')
 		const cityName = req.body.cityName;
 
 		User.updateOne(
-			{ '_id': userId, 'cities._id': cityId },
+			{ '_id': userId, 'cities.id': cityId },
 			{ $set: { 'cities.$.cityName': cityName } },
 			(err, rawResponse) => {
 				if(err) {
@@ -119,7 +132,7 @@ router.route('/userCities/:userId/:cityId')
 	.delete((req, res) => {
 		User.updateOne(
 			{ _id: req.params.userId }, 
-			{ $pull: { 'cities': { '_id': req.params.cityId } } },
+			{ $pull: { 'cities': { 'id': req.params.cityId } } },
 			(err, rawResponse) => {
 				if(err) {
 					res.send(err);
