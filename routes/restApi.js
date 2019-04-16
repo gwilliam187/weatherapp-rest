@@ -63,12 +63,14 @@ router.route('/users/:userId')
 	// Deletes a specified user
 	.delete((req, res) => {
 		User.findByIdAndDelete(req.params.userId, (err, user) => {
-			if(err) res.send(err);
-
-			res.json({
-				message: 'success',
-				data: user
-			});
+			if(err) {
+				res.send(err);
+			} else {	
+				res.json({
+					message: 'success',
+					data: user
+				});
+			}
 		});
 	});
 
@@ -76,23 +78,31 @@ router.route('/userCities/:userId/:cityId')
 	
 	// Edits a specified city for a specified user
 	.put((req, res) => {
+		/* 
+			Example req.body
+			{ cityName: 'foo' }
+		*/
+		const userId = req.params.userId;
+		const cityId = req.params.cityId;
+		const cityName = req.body.cityName;
+
 		User.updateOne(
 			{ 
-				'_id': req.params.userId, 
-				'cities._id': req.params.cityId
+				'_id': userId, 
+				'cities._id': cityId
 			},
 			{ $set: 
 				{ 
-					'cities.$.cityName': req.body.cityName 
+					'cities.$.cityName': cityName 
 				}
 			},
-			(err, city) => {
-				if(err) 
+			(err, rawResponse) => {
+				if(err) {
 					res.send(err);
-				else {
+				} else {
 					res.json({
 						message: 'success',
-						data: city
+						data: rawResponse
 					});
 				}
 			});
