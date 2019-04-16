@@ -1,12 +1,25 @@
 import mongoose from 'mongoose';
 
+const citySchema = new mongoose.Schema({
+    cityId : {
+        type: String
+    },
+    cityName: {
+        type: String
+    },
+    isPublic: {
+        type: boolean
+    }
+})
+
 const userSchema = new mongoose.Schema({
-	cityName : {
-    type: String
-  },
-  isPublic : {
-    type: boolean
-  }
+    _id: {
+        type: String
+    },
+    cities : {
+        type: [citySchema],
+        default: []
+    }
 });
 
 const User = mongoose.model('User', userSchema);
