@@ -19,17 +19,22 @@ router.route('/users')
 
 	// Creates a user
 	.post((req, res) => {
-		console.log(req.body)
+		/*
+			Example req.body
+			{ _id: 'sandiaga_uno' }
+		*/
 		const _id = req.body._id
 		const data = new User({
 			_id : _id
 		})
 		data.save((err, user)=>{
-			if (err) return console.log(err)
-
-			//console.log(user._id+" added")
-			const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
-			res.json(msg)
+			if (err) {
+				res.send(err);
+			} else {
+				//console.log(user._id+" added")
+				const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
+				res.json(msg)
+			}
 		})
 	});
 
