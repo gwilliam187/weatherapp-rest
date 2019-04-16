@@ -52,12 +52,30 @@ router.route('/userCities/:userId/:cityId')
 	
 	// Edits a specified city for a specified user
 	.put((req, res) => {
-
+		User.update(
+			{ 
+				'_id': req.params.userId, 
+				'cities._id': req.params.cityId
+			},
+			{ $set: { 'cities.$.cityName': req.body.cityName }},
+			(err, city) => {
+				if(err) 
+					res.send(err);
+				else {
+					res.json({
+						message: 'success',
+						data: city
+					});
+				}
+			});
 	})
 
 	// Deletes a specified city from a specified user
 	.delete((req, res) => {
-
+		User.update(
+			{ _id: req.params.userId }, 
+			{ $pullAll: { _id: req.params.cityId } }
+		)
 	});
 
 export default router;
