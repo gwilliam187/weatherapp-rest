@@ -28,7 +28,7 @@ router.route('/users')
 			if (err) return console.log(err)
 
 			//console.log(user._id+" added")
-			const msg = err ? {message: 'failed'} : {message: 'success'}
+			const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
 			res.json(msg)
 		})
 	});
@@ -46,6 +46,10 @@ router.route('/users/:userId')
 
 	// Creates a city for a specified user
 	.post( async(req, res) => {
+		/**
+		 *	Example req.body -> normal form
+		 *  	_id, cityName, isPublic
+		 */
 		const _id = req.params.userId
 		const city = {
 			_id : req.body._id,
