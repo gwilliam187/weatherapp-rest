@@ -44,8 +44,11 @@ router.route('/users/:userId')
 	// Creates a city for a specified user
 	.post( async(req, res) => {
 		const _id = req.params.userId
-		//console.log(req.body.citiesJSON)
-		const city = JSON.parse(req.body.cityJSON); // API caller passes cities in form of JSON array
+		const city = {
+			_id : req.body._id,
+			cityName: req.body.cityName,
+			isPublic: req.body.isPublic
+		}
 		const user = await User.findById(_id)
 		console.log(user);
 		let userCities = user.cities;
@@ -108,7 +111,6 @@ router.route('/userCities/:userId/:cityId')
 			});
 	})
 
-	// Deletes a specified city from a specified user
 	.delete((req, res) => {
 		User.update(
 			{ _id: req.params.userId }, 
