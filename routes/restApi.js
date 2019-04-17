@@ -145,6 +145,7 @@ router.route('/users/:userId/:cityId')
 			});
 	})
 
+	// Deletes a specified city from a specified user
 	.delete((req, res) => {
 		User.updateOne(
 			{ _id: req.params.userId }, 
