@@ -7,7 +7,7 @@ const pass = 'password';
 const dbName = 'weatherapp';
 
 mongoose.connect(`mongodb://${ user }:${ pass }@${ uri }:${ port }/${ dbName }?authSource=admin`, 
-		{ useNewUrlParser: true });
+		{ useNewUrlParser: true, useCreateIndex: true });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

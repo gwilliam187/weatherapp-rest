@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 
 const citySchema = new mongoose.Schema({
-    _id : {
-        type: String
+    _id: false,
+    id : {
+        type: String,
+        required: true
     },
     cityName: {
         type: String

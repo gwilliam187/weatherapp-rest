@@ -9,22 +9,33 @@ router.route('/users')
 	// Gets all users
 	.get((req, res) => {
 		User.find((err, users) => {
-			if(err) res.send(err);
-
-			res.json(users);
+			if(err) {
+				res.send(err);
+			} else {
+				res.json(users);
+			}
 		})
 	})
 
 	// Creates a user
 	.post((req, res) => {
+		/*
+			Example req.body
+			{ _id: 'sandiaga_uno' }
+		*/
+		console.log('here')
 		const _id = req.body._id
 		const data = new User({
 			_id : _id
 		})
 		data.save((err, user)=>{
-			//console.log(user._id+" added")
-			const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
-			res.json(msg)
+			if (err) {
+				res.send(err);
+			} else {
+				//console.log(user._id+" added")
+				const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
+				res.json(msg)
+			}
 		})
 	});
 
@@ -47,26 +58,46 @@ router.route('/users/:userId')
 		 */
 		const _id = req.params.userId
 		const city = {
-			_id : req.body._id,
+			id : req.body.id,
 			cityName: req.body.cityName,
 			isPublic: req.body.isPublic
 		}
+
 		const user = await User.findById(_id)
 		console.log(user)
 		let userCities = user.cities
 		let cityAlreadyExist = false
 		userCities.forEach((existingCity)=>{
-			if (existingCity.id===)
+			if 	(existingCity.id===city.id)
+				cityAlreadyExist = true
 		})
-		userCities.push(city)
-		User.update({_id: _id}, {
-			$set : {
-				cities: userCities
-			}
-		}, (err, response)=>{
-			const msg = err ? err : response
-			res.json(msg)
-		})
+		if (!cityAlreadyExist) {
+			userCities.push(city)
+			User.update({_id: _id}, {
+				$set: {
+					cities: userCities
+				}
+			}, (err, response) => {
+				const msg = err ? err : response
+				res.json(msg)
+			})
+		}else{
+			res.json({
+				status: "failed",
+				message: "City already exist"
+			})
+		}
+
+		// User.updateOne(
+		// 	{ _id: _id },
+		// 	{ $addToSet: { cities: city } },
+		// 	(err, rawResponse) => {
+		// 		if(err) {
+		// 			res.send(err);
+		// 		} else {
+		// 			res.json(rawResponse);
+		// 		}
+		// 	})
 	})
 
 	// Deletes a specified user
@@ -96,15 +127,8 @@ router.route('/userCities/:userId/:cityId')
 		const cityName = req.body.cityName;
 
 		User.updateOne(
-			{ 
-				'_id': userId, 
-				'cities._id': cityId
-			},
-			{ $set: 
-				{ 
-					'cities.$.cityName': cityName 
-				}
-			},
+			{ '_id': userId, 'cities.id': cityId },
+			{ $set: { 'cities.$.cityName': cityName } },
 			(err, rawResponse) => {
 				if(err) {
 					res.send(err);
@@ -118,9 +142,19 @@ router.route('/userCities/:userId/:cityId')
 	})
 
 	.delete((req, res) => {
-		User.update(
+		User.updateOne(
 			{ _id: req.params.userId }, 
-			{ $pullAll: { _id: req.params.cityId } }
+			{ $pull: { 'cities': { 'id': req.params.cityId } } },
+			(err, rawResponse) => {
+				if(err) {
+					res.send(err);
+				} else {
+					res.json({
+						message: 'success',
+						data: rawResponse
+					});
+				}
+			}
 		)
 	});
 
