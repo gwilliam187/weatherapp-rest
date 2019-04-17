@@ -22,8 +22,6 @@ router.route('/users')
 			_id : _id
 		})
 		data.save((err, user)=>{
-			if (err) return console.log(err)
-
 			//console.log(user._id+" added")
 			const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
 			res.json(msg)
@@ -54,15 +52,19 @@ router.route('/users/:userId')
 			isPublic: req.body.isPublic
 		}
 		const user = await User.findById(_id)
-		console.log(user);
-		let userCities = user.cities;
+		console.log(user)
+		let userCities = user.cities
+		let cityAlreadyExist = false
+		userCities.forEach((existingCity)=>{
+			if (existingCity.id===)
+		})
 		userCities.push(city)
 		User.update({_id: _id}, {
 			$set : {
 				cities: userCities
 			}
 		}, (err, response)=>{
-			const msg = err ? {message: 'failed'} : {message: 'success'}
+			const msg = err ? err : response
 			res.json(msg)
 		})
 	})
