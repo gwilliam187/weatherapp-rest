@@ -33,7 +33,7 @@ router.route('/users')
 				res.send(err);
 			} else {
 				//console.log(user._id+" added")
-				const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
 				res.json(msg)
 			}
 		})
@@ -78,7 +78,7 @@ router.route('/users/:userId')
 					cities: userCities
 				}
 			}, (err, response) => {
-				const msg = err ? err : response
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: response}
 				res.json(msg)
 			})
 		}else{
@@ -107,8 +107,8 @@ router.route('/users/:userId')
 				res.send(err);
 			} else {	
 				res.json({
-					message: 'success',
-					data: user
+					status: 'success',
+					message: user
 				});
 			}
 		});
@@ -134,8 +134,8 @@ router.route('/userCities/:userId/:cityId')
 					res.send(err);
 				} else {
 					res.json({
-						message: 'success',
-						data: rawResponse
+						status: 'success',
+						message: rawResponse
 					});
 				}
 			});
@@ -150,8 +150,8 @@ router.route('/userCities/:userId/:cityId')
 					res.send(err);
 				} else {
 					res.json({
-						message: 'success',
-						data: rawResponse
+						status: 'success',
+						message: rawResponse
 					});
 				}
 			}
