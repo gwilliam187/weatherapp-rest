@@ -33,7 +33,7 @@ router.route('/users')
 				res.send(err);
 			} else {
 				//console.log(user._id+" added")
-				const msg = err ? {message: 'failed', data: user} : {message: 'success', data: user}
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
 				res.json(msg)
 			}
 		})
@@ -58,34 +58,46 @@ router.route('/users/:userId')
 		 */
 		const _id = req.params.userId
 		const city = {
-			id : req.body._id,
+			id : req.body.id,
 			cityName: req.body.cityName,
 			isPublic: req.body.isPublic
 		}
 
-		User.updateOne(
-			{ _id: _id },
-			{ $addToSet: { cities: city } },
-			(err, rawResponse) => {
-				if(err) {
-					res.send(err);
-				} else {
-					res.json(rawResponse);
+		const user = await User.findById(_id)
+		console.log(user)
+		let userCities = user.cities
+		let cityAlreadyExist = false
+		userCities.forEach((existingCity)=>{
+			if 	(existingCity.id===city.id)
+				cityAlreadyExist = true
+		})
+		if (!cityAlreadyExist) {
+			userCities.push(city)
+			User.update({_id: _id}, {
+				$set: {
+					cities: userCities
 				}
+			}, (err, response) => {
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: response}
+				res.json(msg)
 			})
+		}else{
+			res.json({
+				status: "failed",
+				message: "City already exist"
+			})
+		}
 
-		// const user = await User.findById(_id)
-		// // console.log(user);
-		// let userCities = user.cities;
-		// userCities.push(city)
-		// User.updateOne({_id: _id}, {
-		// 	$set : {
-		// 		cities: userCities
-		// 	}
-		// }, (err, response)=>{
-		// 	const msg = err ? {message: 'failed'} : {message: 'success'}
-		// 	res.json(msg)
-		// })
+		// User.updateOne(
+		// 	{ _id: _id },
+		// 	{ $addToSet: { cities: city } },
+		// 	(err, rawResponse) => {
+		// 		if(err) {
+		// 			res.send(err);
+		// 		} else {
+		// 			res.json(rawResponse);
+		// 		}
+		// 	})
 	})
 
 	// Deletes a specified user
@@ -95,8 +107,8 @@ router.route('/users/:userId')
 				res.send(err);
 			} else {	
 				res.json({
-					message: 'success',
-					data: user
+					status: 'success',
+					message: user
 				});
 			}
 		});
@@ -126,8 +138,8 @@ router.route('/users/:userId/:cityId')
 					res.send(err);
 				} else {
 					res.json({
-						message: 'success',
-						data: rawResponse
+						status: 'success',
+						message: rawResponse
 					});
 				}
 			});
@@ -142,8 +154,8 @@ router.route('/users/:userId/:cityId')
 					res.send(err);
 				} else {
 					res.json({
-						message: 'success',
-						data: rawResponse
+						status: 'success',
+						message: rawResponse
 					});
 				}
 			}
