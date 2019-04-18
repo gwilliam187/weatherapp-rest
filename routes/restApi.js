@@ -41,7 +41,7 @@ router.route('/users')
 
 router.route('/users/:userId')
 
-	// Gets a specified user
+	// Gets a specified user with their cities
 	.get((req, res) => {
 		User.findById(req.params.userId, (err, user) => {
 			if(err) res.send(err);
@@ -114,13 +114,17 @@ router.route('/users/:userId')
 		});
 	});
 
-router.route('/userCities/:userId/:cityId')
+router.route('/users/:userId/:cityId')
 	
 	// Edits a specified city for a specified user
 	.put((req, res) => {
 		/* 
 			Example req.body
-			{ cityName: 'foo' }
+			{ 
+				_id: 'foo,id',
+				cityName: 'foo',
+				isPublic: true 
+			}
 		*/
 		const userId = req.params.userId;
 		const cityId = req.params.cityId;
@@ -141,6 +145,7 @@ router.route('/userCities/:userId/:cityId')
 			});
 	})
 
+	// Deletes a specified city from a specified user
 	.delete((req, res) => {
 		User.updateOne(
 			{ _id: req.params.userId }, 
