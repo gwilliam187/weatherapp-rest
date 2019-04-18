@@ -153,7 +153,7 @@ router.route('/userCities/:userId/:cityId')
 						status: 'success',
 						message: rawResponse
 					});
-				}
+				}n
 			}
 		)
 	});
