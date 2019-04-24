@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { User } from '../db/mongodb/models/userModel';
+// import { Tree } from '../db/mongodb/models/treeModel';
 
 const router = express.Router();
 
@@ -23,7 +24,6 @@ router.route('/users')
 			Example req.body
 			{ _id: 'sandiaga_uno' }
 		*/
-		console.log('here')
 		const _id = req.body._id
 		const data = new User({
 			_id : _id
@@ -161,6 +161,67 @@ router.route('/users/:userId/:cityId')
 				}
 			}
 		)
+	});
+
+router.route('/trees')
+	
+	// Gets all trees
+	.get((req, res) => {
+		Tree.find((err, trees) => {
+			if(err) {
+				res.send(err);
+			} else {
+				res.json(trees);
+			}
+		});
+	})
+
+	// Creates a tree
+	.post((req, res) => {
+		/*
+			Example req.body
+			{ _id: 'sandiaga_uno' }
+		*/
+		const _id = req.body._id
+		const data = new Tree({
+			_id : _id
+		})
+		data.save((err, user)=>{
+			if (err) {
+				res.send(err);
+			} else {
+				//console.log(user._id+" added")
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
+				res.json(msg)
+			}
+		})
+	});
+
+router.route('/trees/:treeId')
+	
+	// Gets specified tree
+	.get((req, res) => {
+		Tree.findById(req.params.treeId, (err, tree) => {
+			if(err) {
+				res.send(err);
+			} else {
+				res.json(tree);
+			}
+		});
+	})
+
+	// Deletes specified tree
+	.delete((req, res) => {
+		Tree.findByIdAndDelete(req.params.treeId, (err, tree) => {
+			if(err) {
+				res.send(err);
+			} else {	
+				res.json({
+					status: 'success',
+					message: tree
+				});
+			}
+		});
 	});
 
 export default router;
