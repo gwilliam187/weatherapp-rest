@@ -158,7 +158,7 @@ router.route('/users/:userId/:cityId')
 						status: 'success',
 						message: rawResponse
 					});
-				}
+				}n
 			}
 		)
 	});
