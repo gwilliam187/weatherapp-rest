@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { User } from '../db/mongodb/models/userModel';
-// import { Tree } from '../db/mongodb/models/treeModel';
+import { Tree } from '../db/mongodb/models/treeModel';
 
 const router = express.Router();
 
@@ -180,12 +180,17 @@ router.route('/trees')
 	.post((req, res) => {
 		/*
 			Example req.body
-			{ _id: 'sandiaga_uno' }
+			{ 
+				_id: 'apple tree', 
+				description: 'an apple tree'
+			}
 		*/
-		const _id = req.body._id
+		const _id = req.body._id;
+		const description = req.body.description;
 		const data = new Tree({
-			_id : _id
-		})
+			_id : _id,
+			description: description
+		});
 		data.save((err, tree) => {
 			if (err) {
 				res.send(err);
@@ -215,27 +220,28 @@ router.route('/trees/:treeId')
 		/* 
 			Example req.body
 			{ 
-				_id: 'foo,id',
-				cityName: 'foo',
-				isPublic: true 
+				description: 'change me' 
 			}
 		*/
-		const treeId = req.params.treeId;
-		const treeName = req.body.treeName;
+		const id = "apple tree";
+		const update = {
+			$set: { 'description': req.body.description }
+		};
+		const options = {
+			new: true
+		};
 
-		Tree.updateOne(
-			{ '_id': treeId },
-			{ $set: { 'treeName': treeName } },
-			(err, rawResponse) => {
+		Tree.findByIdAndUpdate(id, update, options, (err, doc) => {
 				if(err) {
 					res.send(err);
 				} else {
 					res.json({
 						status: 'success',
-						message: rawResponse
+						message: doc
 					});
 				}
 			});
+	})
 
 	// Deletes specified tree
 	.delete((req, res) => {
