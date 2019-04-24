@@ -186,12 +186,12 @@ router.route('/trees')
 		const data = new Tree({
 			_id : _id
 		})
-		data.save((err, user)=>{
+		data.save((err, tree) => {
 			if (err) {
 				res.send(err);
 			} else {
-				//console.log(user._id+" added")
-				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
+				//console.log(tree._id+" added")
+				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: tree}
 				res.json(msg)
 			}
 		})
@@ -209,6 +209,33 @@ router.route('/trees/:treeId')
 			}
 		});
 	})
+
+	// Edits a specified tree
+	.put((req, res) => {
+		/* 
+			Example req.body
+			{ 
+				_id: 'foo,id',
+				cityName: 'foo',
+				isPublic: true 
+			}
+		*/
+		const treeId = req.params.treeId;
+		const treeName = req.body.treeName;
+
+		Tree.updateOne(
+			{ '_id': treeId },
+			{ $set: { 'treeName': treeName } },
+			(err, rawResponse) => {
+				if(err) {
+					res.send(err);
+				} else {
+					res.json({
+						status: 'success',
+						message: rawResponse
+					});
+				}
+			});
 
 	// Deletes specified tree
 	.delete((req, res) => {
