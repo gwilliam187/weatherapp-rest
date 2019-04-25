@@ -32,7 +32,6 @@ router.route('/users')
 			if (err) {
 				res.send(err);
 			} else {
-				//console.log(user._id+" added")
 				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
 				res.json(msg)
 			}
@@ -87,22 +86,25 @@ router.route('/users/:userId')
 			const update = { $set: { cities: userCities } };
 			const options = { new: true };
 			User.findByIdAndUpdate(id, update, options, (err, doc) => {
-			if(err) {
-				res.json({
-					status: 'failed',
-					message: err
-				});
-			} else {
-				res.json({
-					status: 'success',
-					message: doc
-				});
-			}
-		});
+				if(err) {
+					res.json({
+						status: 'failed',
+						action: 'Add - User City',
+						message: err
+					});
+				} else {
+					res.json({
+						status: 'success',
+						action: 'Add - User City',
+						message: doc.get('cities').find(city => city.id === req.body.id)
+					});
+				}
+			});
 		}else{
 			res.json({
-				status: "failed",
-				message: "City already exist"
+				status: 'failed',
+				action: 'Add - User City',
+				message: 'City already exist'
 			})
 		}
 
@@ -122,10 +124,15 @@ router.route('/users/:userId')
 	.delete((req, res) => {
 		User.findByIdAndDelete(req.params.userId, (err, user) => {
 			if(err) {
-				res.send(err);
+				res.json({
+					status: 'failed',
+					action: 'Delete - User',
+					message: err
+				});
 			} else {	
 				res.json({
 					status: 'success',
+					action: 'Delete - User',
 					message: user
 				});
 			}
@@ -156,11 +163,13 @@ router.route('/users/:userId/:cityId')
 			if(err) {
 				res.json({
 					status: 'failed',
+					action: 'Edit - User City',
 					message: err
 				});
 			} else {
 				res.json({
 					status: 'success',
+					action: 'Edit - User City',
 					message: doc.get('cities').find(city => city.id === cityId)
 				});
 			}
@@ -220,18 +229,26 @@ router.route('/trees')
 				// Duplicate key error
 				if(err.code === 11000) {
 					const msg = {
-						status: 'fail',
-						message: 'ID already exists'
+						status: 'failed',
+						action: 'Add - Tree',
+						message: 'Tree ID already exists'
 					};
 					res.json(msg);
+				} else {
+					const msg = {
+						status: 'failed',
+						action: 'Add - Tree',
+						message: err
+					};
 				}
-
 			} else {
-				//console.log(tree._id+" added")
-				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: tree}
-				res.json(msg)
+				res.json({
+					status: 'success', 
+					action: 'Add - Tree', 
+					message: tree
+				});
 			}
-		})
+		});
 	});
 
 router.route('/trees/:treeId')
@@ -256,19 +273,19 @@ router.route('/trees/:treeId')
 			}
 		*/
 		const id = req.params.treeId;
-		const update = {
-			$set: { 'description': req.body.description }
-		};
-		const options = {
-			new: true
-		};
-
+		const update = { $set: { 'description': req.body.description } };
+		const options = { new: true };
 		Tree.findByIdAndUpdate(id, update, options, (err, doc) => {
 			if(err) {
-				res.send(err);
+				res.json({
+					status: 'failed',
+					action: 'Edit - Tree',
+					message: err
+				});
 			} else {
 				res.json({
 					status: 'success',
+					action: 'Edit - Tree',
 					message: doc
 				});
 			}
@@ -279,10 +296,15 @@ router.route('/trees/:treeId')
 	.delete((req, res) => {
 		Tree.findByIdAndDelete(req.params.treeId, (err, tree) => {
 			if(err) {
-				res.send(err);
+				res.json({
+					status: 'failed',
+					action: 'Delete - Tree',
+					message: err
+				});
 			} else {	
 				res.json({
 					status: 'success',
+					action: 'Delete - Tree',
 					message: tree
 				});
 			}
