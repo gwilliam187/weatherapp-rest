@@ -148,19 +148,23 @@ router.route('/users/:userId/:cityId')
 		const cityId = req.params.cityId;
 		const cityName = req.body.cityName;
 
-		User.updateOne(
-			{ '_id': userId, 'cities.id': cityId },
-			{ $set: { 'cities.$.cityName': cityName } },
-			(err, rawResponse) => {
-				if(err) {
-					res.send(err);
-				} else {
-					res.json({
-						status: 'success',
-						message: rawResponse
-					});
-				}
-			});
+		const query = { '_id': userId, 'cities.id': cityId };
+		const update = { $set: { 'cities.$.cityName': cityName } };
+		const options = { new: true };
+
+		User.findOneAndUpdate(query, update, options, (err, doc) => {
+			if(err) {
+				res.json({
+					status: 'failed',
+					message: err
+				});
+			} else {
+				res.json({
+					status: 'success',
+					message: doc.get('cities').find(city => city.id === cityId)
+				});
+			}
+		});
 	})
 
 	// Deletes a specified city from a specified user
