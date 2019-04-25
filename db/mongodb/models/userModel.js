@@ -22,6 +22,6 @@ const userSchema = new mongoose.Schema({
         type: [citySchema],
         default: []
     }
-});
+}, { versionKey: false });
 
 export const User = mongoose.model('User', userSchema);
