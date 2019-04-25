@@ -24,10 +24,10 @@ router.route('/users')
 			Example req.body
 			{ _id: 'sandiaga_uno' }
 		*/
-		const _id = req.body._id
+		const _id = req.body._id;
 		const data = new User({
 			_id : _id
-		})
+		});
 		data.save((err, user)=>{
 			if (err) {
 				res.send(err);
@@ -73,14 +73,32 @@ router.route('/users/:userId')
 		})
 		if (!cityAlreadyExist) {
 			userCities.push(city)
-			User.update({_id: _id}, {
-				$set: {
-					cities: userCities
-				}
-			}, (err, response) => {
-				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: response}
-				res.json(msg)
-			})
+
+			// User.update({_id: _id}, {
+			// 	$set: {
+			// 		cities: userCities
+			// 	}
+			// }, (err, response) => {
+			// 	const msg = err ? {status: 'failed', message: err} : {status: 'success', message: response}
+			// 	res.json(msg)
+			// })
+
+			const id = _id;
+			const update = { $set: { cities: userCities } };
+			const options = { new: true };
+			User.findByIdAndUpdate(id, update, options, (err, doc) => {
+			if(err) {
+				res.json({
+					status: 'failed',
+					message: err
+				});
+			} else {
+				res.json({
+					status: 'success',
+					message: doc
+				});
+			}
+		});
 		}else{
 			res.json({
 				status: "failed",
@@ -193,7 +211,17 @@ router.route('/trees')
 		});
 		data.save((err, tree) => {
 			if (err) {
-				res.send(err);
+				console.log(err);
+
+				// Duplicate key error
+				if(err.code === 11000) {
+					const msg = {
+						status: 'fail',
+						message: 'ID already exists'
+					};
+					res.json(msg);
+				}
+
 			} else {
 				//console.log(tree._id+" added")
 				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: tree}
@@ -223,7 +251,7 @@ router.route('/trees/:treeId')
 				description: 'change me' 
 			}
 		*/
-		const id = "apple tree";
+		const id = req.params.treeId;
 		const update = {
 			$set: { 'description': req.body.description }
 		};
@@ -232,15 +260,15 @@ router.route('/trees/:treeId')
 		};
 
 		Tree.findByIdAndUpdate(id, update, options, (err, doc) => {
-				if(err) {
-					res.send(err);
-				} else {
-					res.json({
-						status: 'success',
-						message: doc
-					});
-				}
-			});
+			if(err) {
+				res.send(err);
+			} else {
+				res.json({
+					status: 'success',
+					message: doc
+				});
+			}
+		});
 	})
 
 	// Deletes specified tree
