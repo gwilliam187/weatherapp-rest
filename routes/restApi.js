@@ -30,10 +30,17 @@ router.route('/users')
 		});
 		data.save((err, user)=>{
 			if (err) {
-				res.send(err);
+				res.json({
+					status: 'failed',
+					action: 'Add - User',
+					message: err
+				});
 			} else {
-				const msg = err ? {status: 'failed', message: err} : {status: 'success', message: user}
-				res.json(msg)
+				res.json({
+					status: 'success',
+					action: 'Add - User',
+					message: user
+				});
 			}
 		})
 	});
