@@ -72,7 +72,6 @@ router.route('/users/:userId')
 		}
 
 		const user = await User.findById(_id)
-		console.log(user)
 		let userCities = user.cities
 		let cityAlreadyExist = false
 		userCities.forEach((existingCity)=>{
