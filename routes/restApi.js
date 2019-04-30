@@ -32,12 +32,14 @@ router.route('/users')
 			if (err) {
 				res.json({
 					status: 'failed',
+					source: 'REST',
 					action: 'Add - User',
 					message: err
 				});
 			} else {
 				res.json({
 					status: 'success',
+					source: 'REST',
 					action: 'Add - User',
 					message: user
 				});
@@ -96,12 +98,14 @@ router.route('/users/:userId')
 				if(err) {
 					res.json({
 						status: 'failed',
+						source: 'REST',
 						action: 'Add - User City',
 						message: err
 					});
 				} else {
 					res.json({
 						status: 'success',
+						source: 'REST',
 						action: 'Add - User City',
 						message: doc.get('cities').find(city => city.id === req.body.id)
 					});
@@ -110,6 +114,7 @@ router.route('/users/:userId')
 		}else{
 			res.json({
 				status: 'failed',
+				source: 'REST',
 				action: 'Add - User City',
 				message: 'City already exist'
 			})
@@ -133,12 +138,14 @@ router.route('/users/:userId')
 			if(err) {
 				res.json({
 					status: 'failed',
+					source: 'REST',
 					action: 'Delete - User',
 					message: err
 				});
 			} else {	
 				res.json({
 					status: 'success',
+					source: 'REST',
 					action: 'Delete - User',
 					message: user
 				});
@@ -170,12 +177,14 @@ router.route('/users/:userId/:cityId')
 			if(err) {
 				res.json({
 					status: 'failed',
+					source: 'REST',
 					action: 'Edit - User City',
 					message: err
 				});
 			} else {
 				res.json({
 					status: 'success',
+					source: 'REST',
 					action: 'Edit - User City',
 					message: doc.get('cities').find(city => city.id === cityId)
 				});
@@ -194,6 +203,8 @@ router.route('/users/:userId/:cityId')
 				} else {
 					res.json({
 						status: 'success',
+						source: 'REST',
+						action: 'Delete - User City',
 						message: rawResponse
 					});
 				}n
@@ -237,6 +248,7 @@ router.route('/trees')
 				if(err.code === 11000) {
 					const msg = {
 						status: 'failed',
+						source: 'REST',
 						action: 'Add - Tree',
 						message: 'Tree ID already exists'
 					};
@@ -244,13 +256,15 @@ router.route('/trees')
 				} else {
 					const msg = {
 						status: 'failed',
+						source: 'REST',
 						action: 'Add - Tree',
 						message: err
 					};
 				}
 			} else {
 				res.json({
-					status: 'success', 
+					status: 'success',
+					source: 'REST',
 					action: 'Add - Tree', 
 					message: tree
 				});
@@ -286,12 +300,14 @@ router.route('/trees/:treeId')
 			if(err) {
 				res.json({
 					status: 'failed',
+					source: 'REST',
 					action: 'Edit - Tree',
 					message: err
 				});
 			} else {
 				res.json({
 					status: 'success',
+					source: 'REST',
 					action: 'Edit - Tree',
 					message: doc
 				});
@@ -305,12 +321,14 @@ router.route('/trees/:treeId')
 			if(err) {
 				res.json({
 					status: 'failed',
+					source: 'REST',
 					action: 'Delete - Tree',
 					message: err
 				});
 			} else {	
 				res.json({
 					status: 'success',
+					source: 'REST',
 					action: 'Delete - Tree',
 					message: tree
 				});
