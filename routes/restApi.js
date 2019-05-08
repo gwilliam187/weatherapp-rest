@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { User } from '../db/mongodb/models/userModel';
+import { City } from '../db/mongodb/models/cityModel';
 import { Tree } from '../db/mongodb/models/treeModel';
 
 const router = express.Router();
@@ -11,9 +12,19 @@ router.route('/users')
 	.get((req, res) => {
 		User.find((err, users) => {
 			if(err) {
-				res.send(err);
+				res.json({
+					status: 'failed',
+					source: 'REST',
+					action: 'View - User',
+					message: err
+				});
 			} else {
-				res.json(users);
+				res.json({
+					status: 'success',
+					source: 'REST',
+					action: 'View - User',
+					message: users
+				});
 			}
 		})
 	})
@@ -48,90 +59,6 @@ router.route('/users')
 	});
 
 router.route('/users/:userId')
-
-	// Gets a specified user with their cities
-	.get((req, res) => {
-		User.findById(req.params.userId, (err, user) => {
-			if(err) res.send(err);
-
-			res.json(user);
-		})
-	})
-
-	// Creates a city for a specified user
-	.post( async(req, res) => {
-		/**
-		 *	Example req.body -> normal form
-		 *  	_id, cityName, isPublic
-		 */
-		const _id = req.params.userId
-		const city = {
-			id : req.body.id,
-			cityName: req.body.cityName,
-			isPublic: req.body.isPublic
-		}
-
-		const user = await User.findById(_id)
-		let userCities = user.cities
-		let cityAlreadyExist = false
-		userCities.forEach((existingCity)=>{
-			if 	(existingCity.id===city.id)
-				cityAlreadyExist = true
-		})
-		if (!cityAlreadyExist) {
-			userCities.push(city)
-
-			// User.update({_id: _id}, {
-			// 	$set: {
-			// 		cities: userCities
-			// 	}
-			// }, (err, response) => {
-			// 	const msg = err ? {status: 'failed', message: err} : {status: 'success', message: response}
-			// 	res.json(msg)
-			// })
-
-			const id = _id;
-			const update = { $set: { cities: userCities } };
-			const options = { new: true };
-			User.findByIdAndUpdate(id, update, options, (err, doc) => {
-				if(err) {
-					res.json({
-						status: 'failed',
-						source: 'REST',
-						action: 'Add - User City',
-						message: err
-					});
-				} else {
-					res.json({
-						status: 'success',
-						source: 'REST',
-						action: 'Add - User City',
-						message: doc.get('cities').find(city => city.id === req.body.id)
-					});
-				}
-			});
-		}else{
-			res.json({
-				status: 'failed',
-				source: 'REST',
-				action: 'Add - User City',
-				message: 'City already exist'
-			})
-		}
-
-		// User.updateOne(
-		// 	{ _id: _id },
-		// 	{ $addToSet: { cities: city } },
-		// 	(err, rawResponse) => {
-		// 		if(err) {
-		// 			res.send(err);
-		// 		} else {
-		// 			res.json(rawResponse);
-		// 		}
-		// 	})
-	})
-
-	// Deletes a specified user
 	.delete((req, res) => {
 		User.findByIdAndDelete(req.params.userId, (err, user) => {
 			if(err) {
@@ -152,63 +79,116 @@ router.route('/users/:userId')
 		});
 	});
 
-router.route('/users/:userId/:cityId')
-	
-	// Edits a specified city for a specified user
-	.put((req, res) => {
-		/* 
-			Example req.body
-			{ 
-				_id: 'foo,id',
-				cityName: 'foo',
-				isPublic: true 
-			}
-		*/
-		const userId = req.params.userId;
-		const cityId = req.params.cityId;
-		const cityName = req.body.cityName;
+router.route('/cities')
 
-		const query = { '_id': userId, 'cities.id': cityId };
-		const update = { $set: { 'cities.$.cityName': cityName } };
-		const options = { new: true };
-
-		User.findOneAndUpdate(query, update, options, (err, doc) => {
+	// Gets all cities
+	.get((req, res) => {
+		City.find((err, cities) => {
 			if(err) {
 				res.json({
 					status: 'failed',
 					source: 'REST',
-					action: 'Edit - User City',
+					action: 'View - City',
 					message: err
 				});
 			} else {
 				res.json({
 					status: 'success',
 					source: 'REST',
-					action: 'Edit - User City',
-					message: doc.get('cities').find(city => city.id === cityId)
+					action: 'View - City',
+					message: cities
 				});
 			}
 		});
 	})
 
-	// Deletes a specified city from a specified user
-	.delete((req, res) => {
-		User.updateOne(
-			{ _id: req.params.userId }, 
-			{ $pull: { 'cities': { 'id': req.params.cityId } } },
-			(err, rawResponse) => {
-				if(err) {
-					res.send(err);
-				} else {
-					res.json({
-						status: 'success',
-						source: 'REST',
-						action: 'Delete - User City',
-						message: rawResponse
-					});
-				}n
+	// Creates a ity
+	.post((req, res) => {
+		/*
+			Example req.body
+			{ _id: 'bandung,id',
+				cityName: 'Bandung lautan api',
+				isPublic: true,
+				owners: ['jokowi'] }
+		*/
+		const data = new City({
+			_id : req.body._id,
+			cityName: req.body.cityName,
+			isPublic: req.body.isPublic,
+			owners: req.body.owners
+		});
+		data.save((err, city)=>{
+			if (err) {
+				res.json({
+					status: 'failed',
+					source: 'REST',
+					action: 'Add - City',
+					message: err
+				});
+			} else {
+				res.json({
+					status: 'success',
+					source: 'REST',
+					action: 'Add - City',
+					message: city
+				});
 			}
-		)
+		})
+	});
+
+router.route('/cities/:cityId')
+	.put((req, res) => {
+		/*
+			Example req.body
+			{ _id: 'bandung,id',
+				cityName: 'Bandung lautan api',
+				isPublic: true,
+				owners: ['jokowi'] }
+		*/
+		const id = req.params.cityId;
+		const update = {
+			cityName: req.body.cityName,
+			isPublic: req.body.isPublic,
+			owners: req.body.owners
+		};
+		const options = { new: true };
+		City.findByIdAndUpdate(id, update, options, (err, doc) => {
+			if(!err) {
+				res.json({
+					status: 'success',
+					source: 'REST',
+					action: 'Update - City',
+					message: doc
+				});
+			} else {
+				res.json({
+					status: 'failed',
+					source: 'REST',
+					action: 'Update - City',
+					message: err
+				});
+			}
+		});
+	})
+
+	.delete((req, res) => {
+		City.findByIdAndDelete(req.params.cityId, (err, city) => {
+			if(err) {
+				res.json({
+					status: 'failed',
+					source: 'REST',
+					action: 'Delete - City',
+					message: err
+				});
+			} else {	
+				res.json({
+					status: 'success',
+					source: 'REST',
+					action: 'Delete - City',
+					message: city
+				});
+			}
+		});
 	});
 
 router.route('/trees')
