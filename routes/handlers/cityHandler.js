@@ -98,30 +98,6 @@ export const editCity = (req, res) => {
 			});
 		}
 	});
-
-	// const update = {
-	// 	cityName: req.body.cityName,
-	// 	isPublic: req.body.isPublic,
-	// 	owners: req.body.owners
-	// };
-	// const options = { new: true };
-	// City.findByIdAndUpdate(id, update, options, (err, doc) => {
-	// 	if(!err) {
-	// 		res.json({
-	// 			status: 'success',
-	// 			source: 'REST',
-	// 			action: 'Update - City',
-	// 			message: doc
-	// 		});
-	// 	} else {
-	// 		res.json({
-	// 			status: 'failed',
-	// 			source: 'REST',
-	// 			action: 'Update - City',
-	// 			message: err
-	// 		});
-	// 	}
-	// });
 };
 
 export const deleteCity = (req, res) => {
