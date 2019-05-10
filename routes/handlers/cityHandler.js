@@ -62,19 +62,32 @@ export const editCity = (req, res) => {
 			owners: ['jokowi'] }
 	*/
 	const id = req.params.cityId;
-	const update = {
-		cityName: req.body.cityName,
-		isPublic: req.body.isPublic,
-		owners: req.body.owners
-	};
-	const options = { new: true };
-	City.findByIdAndUpdate(id, update, options, (err, doc) => {
+	City.findById(id, (err, doc) => {
 		if(!err) {
-			res.json({
-				status: 'success',
-				source: 'REST',
-				action: 'Update - City',
-				message: doc
+			let updatedOwners = doc.owners;
+			updatedOwners.push(...req.body.owners);
+			updatedOwners = [...new Set(updatedOwners)];
+
+			doc.cityName = req.body.cityName;
+			doc.isPublic = req.body.isPublic;
+			doc.owners = updatedOwners;
+
+			doc.save((err, doc) => {
+				if(!err) {
+					res.json({
+						status: 'success',
+						source: 'REST',
+						action: 'Update - City',
+						message: doc
+					});
+				} else {
+					res.json({
+						status: 'failed',
+						source: 'REST',
+						action: 'Update - City',
+						message: err
+					});
+				}
 			});
 		} else {
 			res.json({
@@ -85,6 +98,30 @@ export const editCity = (req, res) => {
 			});
 		}
 	});
+
+	// const update = {
+	// 	cityName: req.body.cityName,
+	// 	isPublic: req.body.isPublic,
+	// 	owners: req.body.owners
+	// };
+	// const options = { new: true };
+	// City.findByIdAndUpdate(id, update, options, (err, doc) => {
+	// 	if(!err) {
+	// 		res.json({
+	// 			status: 'success',
+	// 			source: 'REST',
+	// 			action: 'Update - City',
+	// 			message: doc
+	// 		});
+	// 	} else {
+	// 		res.json({
+	// 			status: 'failed',
+	// 			source: 'REST',
+	// 			action: 'Update - City',
+	// 			message: err
+	// 		});
+	// 	}
+	// });
 };
 
 export const deleteCity = (req, res) => {
