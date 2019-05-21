@@ -63,7 +63,7 @@ export const editCity = (req, res) => {
 	*/
 	const id = req.params.cityId;
 	City.findById(id, (err, doc) => {
-		if(!err) {
+		if(!err && doc) {
 			let updatedOwners = doc.owners;
 			updatedOwners.push(...req.body.owners);
 			updatedOwners = [...new Set(updatedOwners)];
