@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const uri = 'sgu.pdm-commsult.intranet';
 const port = '27017';
-const user = 'commsult-admin';
+const user = 'admin';
 const pass = 'password';
 const dbName = 'weatherapp';
 
