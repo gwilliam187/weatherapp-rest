@@ -69,6 +69,7 @@ router.route('/cities')
 					region: req.body.region,
 					country: req.body.country,
 					location: req.body.location,
+					countryCapital: req.body.countryCapital,
 					callingCode: req.body.callingCode,
 					currency: req.body.currency,
 					countrySurfaceArea: req.body.countrySurfaceArea,
