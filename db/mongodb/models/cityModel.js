@@ -47,6 +47,6 @@ const citySchema = new mongoose.Schema({
 	countryYearOfIndependence:{
 		type: String
 	}
-})
+}, { versionKey: false })
 
 export const City = mongoose.model("City", citySchema)
