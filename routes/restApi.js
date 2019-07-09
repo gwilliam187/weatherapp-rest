@@ -137,7 +137,7 @@ router.route('/employees')
 		if (typeof req.query.limit!=='undefined') {
 			res.json(await getEmployees(conn, req.query.limit))
 		}else {
-			res.json(await getEmployees(conn))
+			res.json(await getEmployees(conn, 10))
 		}
 		conn.end()
 	})
