@@ -3,7 +3,7 @@ import db from './db'
 
 export const getEmployees = (conn, limit)=>{
 	return new Promise((resolve, reject)=>{
-		let query = `SELECT  de.emp_no, e.first_name, e.last_name, e.hire_date, t.title, d.dept_name FROM employees e INNER JOIN titles t ON e.emp_no = t.emp_no INNER JOIN dept_emp de ON e.emp_no = de.emp_no INNER JOIN departments d ON de.dept_no = d.dept_no WHERE t.to_date = '9999-01-01' AND de.to_date = '9999-01-01' `
+		let query = `SELECT  de.emp_no, e.first_name, e.last_name, e.hire_date, t.title, d.dept_name, e.birth_date, e.gender FROM employees e INNER JOIN titles t ON e.emp_no = t.emp_no INNER JOIN dept_emp de ON e.emp_no = de.emp_no INNER JOIN departments d ON de.dept_no = d.dept_no WHERE t.to_date = '9999-01-01' AND de.to_date = '9999-01-01'`
 
 		if (typeof limit !== "undefined"){
 			query += "LIMIT "+limit
