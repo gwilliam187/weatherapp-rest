@@ -21,7 +21,9 @@ export const getEmployees = (conn, limit)=>{
 						last_name: res[i].last_name,
 						title: res[i].title,
 						hire_date: res[i].hire_date,
-						dept_name: res[i].dept_name
+						dept_name: res[i].dept_name,
+						birth_date: res[i].birth_date,
+						gender: res[i].gender
 					})
 				}
 				resolve(data)
