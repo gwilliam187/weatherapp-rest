@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const uri = 'sgu.pdm-commsult.intranet';
+const uri = '127.0.0.1';
 const port = '27017';
 const user = 'admin';
 const pass = 'password';

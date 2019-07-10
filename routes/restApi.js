@@ -124,7 +124,7 @@ router.route('/cities')
 		})
 	})
 
-const host = 'sgu.pdm-commsult.intranet'
+const host = '127.0.0.1'//'sgu.pdm-commsult.intranet'
 const dbUser = 'root'
 const dbPass = '!QAZxsw2'
 const dbName = 'employees'
